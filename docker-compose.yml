@@ -1,0 +1,31 @@
+version: '3.0'
+services:
+  process0:
+    container_name: pow-process0
+    build:
+      dockerfile: dockerfiles/p0/Dockerfile
+      context: .
+      args:
+        - "java"
+        - "-jar"
+        - "/usr/local/lib/pow.jar"
+        - "0"
+    network_mode: host
+  process1:
+    container_name: pow-process1
+    build:
+      dockerfile: dockerfiles/p1/Dockerfile
+      context: .
+    network_mode: host
+  process2:
+    container_name: pow-process2
+    build:
+      dockerfile: dockerfiles/p2/Dockerfile
+      context: .
+    network_mode: host
+    depends_on:
+      - process0
+      - process1
+
+
+
