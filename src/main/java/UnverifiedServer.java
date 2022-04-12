@@ -29,7 +29,7 @@ public class UnverifiedServer implements Runnable {
     @Override
     public void run() {
         try (final ServerSocket serverSocket = new ServerSocket(port)) {
-            while (true) new UnverifiedWorker(pid, serverSocket.accept(), registeredKeys, unverifiedBlocks).run();
+            while (!Blockchain.SHUT_DOWN_FLAG.get()) new UnverifiedWorker(pid, serverSocket.accept(), registeredKeys, unverifiedBlocks).run();
         } catch (IOException e) {
             System.out.println(this.getClass().getSimpleName() + pid + " has encountered an error : " + e.getMessage());
             e.printStackTrace();

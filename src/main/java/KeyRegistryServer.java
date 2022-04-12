@@ -25,7 +25,7 @@ public class KeyRegistryServer implements Runnable {
     @Override
     public void run() {
         try (final ServerSocket serverSocket = new ServerSocket(port)) {
-            while (true)
+            while (!Blockchain.SHUT_DOWN_FLAG.get())
                 new KeyRegistryWorker(pid, serverSocket.accept(), registeredKeys).run();                // block until connection arrives, spawn worker to handle behavior
         } catch (IOException e) {
             System.out.println(this.getClass().getSimpleName() + pid + " has encountered an error : " + e.getMessage());

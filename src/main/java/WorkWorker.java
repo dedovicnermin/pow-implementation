@@ -24,7 +24,7 @@ public class WorkWorker implements Runnable {
 
 
     public void run() {
-        while (true) {
+        while (!Blockchain.SHUT_DOWN_FLAG.get()) {
             final BlockRecord unverifiedBlock = unverifiedBlocks.poll();    // can return null if none are present
             if (Objects.isNull(unverifiedBlock)) continue;                  // if this is the case, continue processing
 

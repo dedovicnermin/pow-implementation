@@ -5,7 +5,9 @@
    1. **[OPTIONAL]** Give respective execution configuration a name/id for clarity `Blockchain 0 | Blockchain 1 | Blockchain 2`
    2. run each config file starting from 0
    
-2. In root directory, run `docker-compose up -d` from command line
+2. In root directory, run `docker compose up -d` from command line
+   1. when shut down initiates, inspect shut down snapshot with `docker compose logs`. One can also enter the container `pow-process0` and inspect the `BlockchainLedger.json`
+   2. clean up -- `docker compose down`
 
 ## verifying with JQ
 - ```cat BlockChainLedger.json | jq '. | length'``` : should always be 13 blocks

@@ -23,6 +23,7 @@ public class Blockchain {
         new Thread(new VerifiedServer(PID.get(), VBC_SERVER_PORT_BASE, BLOCKCHAIN, VERIFIED_BLOCK_IDS)).start();                // start up verified block listener and be ready to receive dummy block
         new Thread(new UnverifiedServer(PID.get(), UBC_SERVER_PORT_BASE, REGISTERED_KEYS, UNVERIFIED_BLOCKS)).start();          // start up unverified block listener - responsible for checking signatures and supplying into priorityQueue
         new Thread(new WorkWorker(PID.get(), UNVERIFIED_BLOCKS,VERIFIED_BLOCK_IDS, BLOCKCHAIN)).start();                        // start up work server which consumes from the PQ and competes with other processes to solve the puzzle
+        new Thread(new ShutDownListener(PID.get(), 9092, SHUT_DOWN_FLAG)).start();
 
 
         // Process2 is responsible for handling startup work
@@ -42,6 +43,7 @@ public class Blockchain {
         multicastPublicKey();   // ensure public keys are sent out inorder for processes to verify legitimate members of the protocol
 
         new Blockchain();       // handles parsing input file, building UBs blocks with the data, and multicasting to protocol members
+
     }
 
 // ===============================================================================================================
@@ -199,7 +201,9 @@ public class Blockchain {
     static final int UBC_SERVER_PORT_BASE = 4820;
     static final int VBC_SERVER_PORT_BASE = 4930;
     static final int START_SYSTEM_PORT_BASE = 8080;
+    static final int SHUT_DOWN_PORT = 9092;
     static final AtomicBoolean SYSTEM_START_FLAG = new AtomicBoolean(false);
+    static final AtomicBoolean SHUT_DOWN_FLAG = new AtomicBoolean(false);
     static final AtomicInteger PID = new AtomicInteger(0);
 
 

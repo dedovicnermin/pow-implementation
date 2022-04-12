@@ -27,7 +27,7 @@ public class VerifiedServer implements Runnable {
     @Override
     public void run() {
         try (final ServerSocket serverSocket = new ServerSocket(port)) {
-            while (true)
+            while (!Blockchain.SHUT_DOWN_FLAG.get())
                 new VerifiedWorker(pid, serverSocket.accept(), blockchain, verifiedBlockIdentifiers).run();                // Block thread until we receive a block, spawn a worker to handle
         } catch (IOException e) {
             System.out.println(this.getClass().getSimpleName() + pid + " has encountered an error : " + e.getMessage());

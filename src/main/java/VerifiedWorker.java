@@ -1,4 +1,5 @@
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -58,10 +59,31 @@ public class VerifiedWorker implements Runnable, Consumer<String> {
     private void writeJson() {
         try (final FileWriter writer = new FileWriter("BlockchainLedger.json")) {
             final Collection<BlockRecord> values = blockchain.values(); // should still remain sorted as linkedHashMap out of the box
-            new Gson().toJson(values, writer);
+            final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(values, writer);
+            if (blockchain.size() == 13) {
+                multicastShutdown();
+                System.out.println("\n\n\n\nSHUT DOWN SNAPSHOT \n" + gson.toJson(values));
+            }
         } catch (IOException e) {
             System.out.println("Issue with writing out json");
             e.printStackTrace();
+        }
+    }
+
+
+    private void multicastShutdown() {
+        for (int i = 0; i < 3; i++) {
+            try (
+                    final Socket socket = new Socket(Blockchain.LOCALHOST, Blockchain.SHUT_DOWN_PORT + i);
+                    final ObjectOutputStream OUT = new ObjectOutputStream(socket.getOutputStream())
+            ) {
+                OUT.writeObject("chain down");
+                OUT.flush();
+            } catch (IOException e) {
+                System.out.printf("[%d] : Something went wrong when trying to multicast shutdown %n%s%n", pid, e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 }
